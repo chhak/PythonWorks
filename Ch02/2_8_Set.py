@@ -5,7 +5,7 @@
 """
 
 #집합 생성
-set1 = set([1, 2, 3, 4, 5, 3, 1])
+set1 = {1, 2, 3, 4, 5, 3, 1}
 set2 = set('Hello Korea')
 
 print('set1 :', set1)
