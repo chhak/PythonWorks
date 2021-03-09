@@ -4,6 +4,7 @@
 내용 : 파이썬 가상 브라우저를 이용한 네이버 뉴스 수집
 """
 from selenium import webdriver
+from openpyxl import Workbook
 
 # 가상브라우저 실행
 browser = webdriver.Chrome('./chromedriver.exe')
@@ -20,15 +21,27 @@ btn_sokbo = browser.find_element_by_css_selector('#lnb > ul > li:nth-child(2) > 
 btn_sokbo.click()
 
 
+# Excel 파일생성
+workbook = Workbook()
+sheet = workbook.active
+
 i = 0
 
 while True:
     # 뉴스 리스트 제목 선택
-    tags_title = browser.find_elements_by_css_selector('#main_content > div.list_body.newsflash_body > ul > li > dl > dt:nth-child(2) > a')
+    tags_dl = browser.find_elements_by_css_selector('#main_content > div.list_body.newsflash_body > ul > li > dl')
 
     # 뉴스 제목 출력
-    for tit in tags_title:
-        print(tit.text)
+    for dl in tags_dl:
+        #print(tit.text)
+        try:
+            title  = dl.find_element_by_css_selector('dt:nth-child(2) > a')
+            writer = dl.find_element_by_css_selector('dd > span.writing')
+
+            sheet.append([writer.text, title.text.strip()])
+        except:
+            print('예외발생...')
+
 
     # 다음 페이지 번호 클릭
     tags_paging = browser.find_elements_by_css_selector('#main_content > div.paging > a')
@@ -39,6 +52,10 @@ while True:
     # 10번까지 제목 출력 후 종료
     if i > 8:
         break
+
+# Excel 파일저장
+workbook.save('C:/Users/bigdata/Desktop/News2.xlsx')
+workbook.close()
 
 # 브라우저 종료
 browser.quit()
